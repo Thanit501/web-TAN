@@ -1,0 +1,19 @@
+.Sidebar {
+  width: 14rem;
+  height: 95vh;
+  border-right: 2px solid #ced6e0;
+  background-color: #f1f2f6;
+}
+ul {
+  list-style: none;
+  padding: 1rem 3rem;
+}
+li {
+  margin-bottom: 2rem;
+}
+a {
+  text-decoration: none;
+}
+.aactive {
+  background-color: #ced6e0;
+}
