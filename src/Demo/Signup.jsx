@@ -1,73 +1,60 @@
 import React from "react";
 import react, { Component } from "react";
-import { useFormik } from "formik";
+import { useFormik, Formik, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 // import react, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import Navbar from "../Demo/Navbar";
-import Axios from "axios";
 import axios from "axios";
+import Navbar from "../Demo/Navbar";
+import Swal from "sweetalert2";
 
 const Signup = (props) => {
   const formik = useFormik({
     initialValues: {
-      username: "",
-      email: "",
+      user_name: "",
+      mail: "",
       password: "",
     },
+
     ValidationSchema: yup.object({
-      username: yup.string().strict().trim().required("This field is required"),
-      email: yup
+      user_name: yup
+        .string()
+        .strict()
+        .trim()
+        .required("This field is required"),
+      mail: yup
         .string()
         .email("Enter Valid Email Address")
         .strict()
         .trim()
         .required("This field is required"),
-      password: yup.string().strict().trim().required("This field is required"),
+      password: yup.string().min(4).max(10).required("This field is required"),
     }),
 
-    onSubmit: (data) => {
+    onSubmit: async (data) => {
       console.log(data);
-      axios
-        .post("http://localhost:4500/api/Watcher/create", data)
-        .then((res) => {
-          console.log(res);
-          console.log(res.data);
 
-          // props.history.push(./)
-        });
+      try {
+        let response = await axios.post(
+          "http://192.168.0.110/api/Watcher/Create",
+          data
+        );
+        console.log(response);
+        props.history.push("./Adduser");
+      } catch (err) {
+        alert("email exists");
+      }
+
+      // Swal({
+      //   title: "Fields Empty!!",
+      //   text: "Please check the missing field!!",
+      //   icon: "warning",
+      //   button: "Ok",
+      // });
     },
   });
 
-  // const [input, setInput] = useState({
-  //   username: "",
-  //   email: "",
-  //   password: "",
-  // });
-
-  // const handleChange = (e) => {
-  //   const { target } = e;
-  //   const { name } = target;
-  //   const value = name === "term" ? target.checked : target.value;
-
-  //   setInput({
-  //     ...input,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const onSubmit = async (e) => {
-  //   e.preventDefault();
-  //   // console.log("submit value", input);
-  //   await Axios.post("http://localhost:4500/api/Watcher/create", {
-  //     username: input.username,
-  //     email: input.email,
-  //     password: input.password
-  //   })
-  //   .then(res => {
-
-  //   })
-  // };
+  // props.history.push(./)
 
   return (
     <>
@@ -88,7 +75,7 @@ const Signup = (props) => {
                   class="form-control"
                   id="txtusername"
                   placeholder="username"
-                  name="username"
+                  name="user_name"
                   onChange={formik.handleChange}
                 />
               </div>
@@ -101,7 +88,7 @@ const Signup = (props) => {
                   class="form-control"
                   id="txtemail"
                   placeholder="name@example.com"
-                  name="email"
+                  name="mail"
                   onChange={formik.handleChange}
                 />
               </div>
@@ -110,6 +97,7 @@ const Signup = (props) => {
                   Password
                 </label>
                 <input
+                  required
                   type="password"
                   class="form-control"
                   id="numpassword"
@@ -124,6 +112,7 @@ const Signup = (props) => {
                   to="/Adduser"
                   className="btn btn-outline-secondary"
                   type="submit"
+                  id="submit"
                 >
                   Next
                 </button>

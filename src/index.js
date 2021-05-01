@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import Dashborad from '../src/Demo/Dashborad';
 import "../src/index.css";
 import { BrowserRouter } from 'react-router-dom';
 

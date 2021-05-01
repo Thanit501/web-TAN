@@ -1,10 +1,15 @@
 import React from "react";
+import pic from "../Image/404.svg";
+import "../Demo/urlnotfound.css";
 
-function urlnotfound() {
+const urlnotfound = () => {
   return (
     <div>
-      <h1>Page Not Found</h1>
+      <div className="wrapper">
+        <img src={pic} alt="404 img" />
+        <h1>404 Page Not Found</h1>
+      </div>
     </div>
   );
-}
+};
 export default urlnotfound;

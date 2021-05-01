@@ -1,31 +1,50 @@
 import React from "react";
 import react, { useState } from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
 import Navbar from "../Demo/Navbar";
-import Axios from "axios";
+import axios from "axios";
 
-const Adduser = () => {
-  const [input, setInput] = useState({
-    firstname: "",
-    lastname: "",
-    term: "",
-    age: "",
+const Adduser = (props) => {
+  const formik = useFormik({
+    initialValues: {
+      first_name: "",
+      last_name: "",
+      gender: "",
+      age: "",
+    },
+    ValidationSchema: yup.object({
+      first_name: yup
+        .string()
+        .strict()
+        .trim()
+        .required("This field is required"),
+
+      last_name: yup
+        .string()
+        .strict()
+        .trim()
+        .required("This field is required"),
+      gender: yup.string().strict().trim().required("This field is required"),
+      age: yup.string().strict().trim().required("This field is required"),
+    }),
+
+    onSubmit: (data) => {
+      console.log(data);
+      try {
+        let response = axios.post(
+          "http://localhost:4500/api/Blind/create",
+          data
+        );
+        console.log(response);
+        props.history.push("./Dashborad");
+      } catch (err) {
+        alert("email exists");
+      }
+
+      // props.history.push(./)
+    },
   });
-
-  const handleChange = (e) => {
-    const { target } = e;
-    const { name } = target;
-    const value = name === "term" ? target.checked : target.value;
-
-    setInput({
-      ...input,
-      [name]: value,
-    });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    console.log("submit value", input);
-  };
 
   return (
     <>
@@ -37,7 +56,7 @@ const Adduser = () => {
       <div className="container contact_div">
         <div className="row">
           <div className="col-md-6 col-10 mx-auto">
-            <form onSubmit={onSubmit}>
+            <form onSubmit={formik.handleSubmit}>
               <div class="mb-3">
                 <label for="txtfirstname" class="form-label">
                   Firstname
@@ -47,8 +66,8 @@ const Adduser = () => {
                   class="form-control"
                   id="txtfirstname"
                   placeholder="firstname"
-                  name="firstname"
-                  onChange={handleChange}
+                  name="first_name"
+                  onChange={formik.handleChange}
                 />
               </div>
 
@@ -61,8 +80,8 @@ const Adduser = () => {
                   class="form-control"
                   id="txtlastname"
                   placeholder="lastname"
-                  name="lastname"
-                  onChange={handleChange}
+                  name="last_name"
+                  onChange={formik.handleChange}
                 />
               </div>
 
@@ -75,9 +94,9 @@ const Adduser = () => {
                   <input
                     class="form-check-input"
                     type="radio"
-                    name="term"
+                    name="gender"
                     id="flexRadioDefault1"
-                    onChange={handleChange}
+                    onChange={formik.handleChange}
                   />
                   <label class="form-check-label" for="flexRadioDefault1">
                     Female
@@ -87,9 +106,9 @@ const Adduser = () => {
                   <input
                     class="form-check-input"
                     type="radio"
-                    name="term"
+                    name="gender"
                     id="flexRadioDefault2"
-                    onChange={handleChange}
+                    onChange={formik.handleChange}
                     checked
                   />
                   <label class="form-check-label" for="flexRadioDefault2">
@@ -108,7 +127,7 @@ const Adduser = () => {
                   id="numage"
                   placeholder="age"
                   name="age"
-                  onChange={handleChange}
+                  onChange={formik.handleChange}
                 />
               </div>
 

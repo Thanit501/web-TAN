@@ -1,34 +1,46 @@
 import React from "react";
 import react, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { swap, useFormik } from "formik";
+import * as yup from "yup";
 import Navbar from "../Demo/Navbar";
-import Axios from "axios";
+import axios from "axios";
+import Swal from "sweetalert2";
 
-const Login = () => {
-  const [input, setInput] = useState({
-    username: "",
-    password: "",
+const Login = (props) => {
+  const formik = useFormik({
+    initialValues: {
+      mail: "",
+      password: "",
+    },
+    ValidationSchema: yup.object({
+      user_name: yup
+        .string()
+        .strict()
+        .trim()
+        .required("This field is required"),
+
+      password: yup.string().min(4).max(5).required("This field is required"),
+    }),
+
+    onSubmit: async (data) => {
+      console.log(data);
+      try {
+        let response = await axios.post(
+          "http://192.168.0.110:4500/api/Watcher/loginwatcher",
+          data
+        );
+        console.log(response.data);
+        localStorage.setItem("Token", response.data);
+        console.log(localStorage.getItem("Token", response.data));
+
+        props.history.push("/Dashborad");
+      } catch (err) {
+        alert("Oops, Something went wrong!");
+        // Swal("Oops", "Something went wrong!", "error");
+      }
+    },
   });
-
-  const handleChange = (e) => {
-    const { target } = e;
-    const { name } = target;
-    const value = name === "term" ? target.checked : target.value;
-
-    setInput({
-      ...input,
-      [name]: value,
-    });
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    // console.log("submit value", input);
-    await Axios.post(
-      "http://1192.168.0.114:4500/api/Watcher/loginwatcher",
-      input
-    );
-  };
 
   return (
     <>
@@ -39,18 +51,18 @@ const Login = () => {
       <div className="container contact_div">
         <div className="row">
           <div className="col-md-6 col-10 mx-auto">
-            <form onSubmit={onSubmit}>
+            <form onSubmit={formik.handleSubmit}>
               <div class="mb-3">
                 <label for="txtusername" class="form-label">
-                  Username
+                  Email
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   class="form-control"
                   id="txtusername"
-                  name="username"
-                  onChange={handleChange}
-                  placeholder="username"
+                  name="mail"
+                  onChange={formik.handleChange}
+                  placeholder="name@example.com"
                 />
               </div>
               <div class="mb-3">
@@ -62,19 +74,19 @@ const Login = () => {
                   class="form-control"
                   id="numpassword"
                   name="password"
-                  onChange={handleChange}
+                  onChange={formik.handleChange}
                   placeholder="password"
                 />
               </div>
               <br></br>
               <div className="d-grid gap-2 col-2 mx-auto">
-                <NavLink
+                <button
                   to="/Dashborad"
                   className="btn btn-outline-secondary"
                   type="submit"
                 >
                   Login
-                </NavLink>
+                </button>
               </div>
             </form>
           </div>
